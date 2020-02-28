@@ -1,0 +1,33 @@
+# stock-price-time-series R
+install.packages("quantmod")
+library("quantmod")
+getSymbols("9086",src="yahooj",from="2019-01-01",to="2020-01-09")#日立物流の株価を取得
+stock_data=as.data.frame(YJ9086)
+write.csv(stock_data,"Hitachi.csv")
+chartSeries(YJ9086, TA="addBBands(n=20)",subset="2019-01-01::2020-01-09")#ローソクチャート
+
+owari=YJ9086[,3]#ここから終値で分析
+
+#基礎統計量
+mean(owari)#平均
+max(owari)#最大
+min(owari)#最少
+sd(owari)#標準偏差
+hist(owari)#ヒストグラム
+
+plot(owari) # 時系列の図示
+acf(owari)  # 自己相関
+## 対数をとってみる
+ly <- log(owari)
+plot(ly) # 対数時系列
+acf(ly)  # 自己相関
+## 階差をとってみる
+owari2<- diff(ly)
+plot(owari2) # 階差時系列
+
+owari2
+acf(owari2[2:245]) # 自己相関　NAをカット
+## ラグ1以上の自己相関はほぼない
+## ランダムウォーク的な動きの時系列データであると予想される
+acf(owari,plot=FALSE)$acf[,,1] # 自己相関の計算値の出力
+
